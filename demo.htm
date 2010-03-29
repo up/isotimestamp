@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>jQuery UI ISO-Timestamp Picker</title>
+<script type="text/javascript" src="jquery-1.3.2.js"></script>
+<script type="text/javascript" src="ui.iso-timestamp.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+	$('.iso-timestamp').each(function(i) {  
+		$("#" + this.id).click(function() {
+			$.timestamp.add("#" + this.id);
+		});
+	});  	
+	$.timestamp.options = { 
+		'show_select_seconds' : true,
+		'set_current_time' : true,
+		'text_header' : '', 
+		'text_year' : 'Year:',
+		'text_month' : 'Month:',
+		'text_day' : 'Day:',
+		'text_hour' : 'Hour:',
+		'text_minutes' : 'Minutes:',
+		'text_seconds' : 'Seconds:',
+		'text_btn_ok' : 'ok', 
+		'show_btn_cancel' : true,
+		'text_btn_cancel' : 'abbrechen'
+	};
+});
+
+var calc = function( unit, format ) {
+
+	var result = iso2Epoch($('#endDate').val()) - iso2Epoch($('#startDate').val());
+
+	if(result > 0) {
+		if(unit == 'hours')  output = result/3600;
+		else if(unit == 'minutes') output = result/60;
+		else output = result;
+
+		if(format == 'round') output = Math.round(output);	
+			
+		$('#result').css('color', 'black').val(output);
+	}
+	else {
+		 $('#result').css('color', 'red').val('ERROR: Negative value!');
+	}
+
+}
+
+function iso2Epoch(isoStr){
+	var dateTime_parts = isoStr.split('T');
+	var iso_date_parts = dateTime_parts[0].split('-');
+	var iso_time_parts = dateTime_parts[1].split(':');
+   	var datum = new Date(
+   		Date.UTC (
+   			iso_date_parts[0], iso_date_parts[1]-1, iso_date_parts[2],
+   			iso_time_parts[0], iso_time_parts[1], iso_time_parts[2]
+   		)
+   	);
+   	return datum.getTime()/1000.0;
+}
+
+</script>
+<style type="text/css">
+#iso-timestamp {
+	background: #fff;
+	border: 1px solid #AAA;
+	font-family: arial, sans;
+	padding: 8px;
+}
+#iso-timestamp fieldset {
+	/*width: 65px;*/
+	background: #DDD;
+	border: 0px solid #000;
+}
+#iso-timestamp legend {
+	font-size: 10px;
+}
+.autowidth {
+	display: inline;
+	padding: 5px;
+	white-space: nowrap;
+}
+fieldset {
+	display: inline;
+	float: left
+}
+body {
+	font-family: helvetica, arial, sans;
+	font-size: 85%;
+}
+input {
+	font-size: 85%;
+}
+h1 span {
+	font-family: georgia, arial, sans;
+	color: #AAA;
+}
+#screen {
+	margin: 30px auto;
+	width: 600px;
+	background: #F8F8F8;
+	border: 2px dashed #ccc;
+	padding: 28px;
+}
+</style>
+</head>
+
+<body>
+<div id="screen">
+	
+	<h1>jQuery UI <span>ISO-Timestamp Picker</span></h1>
+	
+	<h3>Demo</h3>
+	<fieldset>
+		<legend>Start-Timestamp:</legend>
+		<input class="iso-timestamp" type="text" id="startDate" />
+	</fieldset>
+	<fieldset>
+		<legend>End-Timestamp:</legend>
+		<input class="iso-timestamp" type="text" id="endDate" />
+	</fieldset>
+	<fieldset>
+		<legend>Result:</legend>
+		<input class="" type="text" id="result" />
+	</fieldset>
+	<div style="clear:left"></div>
+	<br/>
+	<input value="calc seconds" type="button" onclick="calc()" />
+	<input value="calc minutes" type="button" onclick="calc('minutes', 'round')" />
+	<input value="calc hours" type="button" onclick="calc('hours')" />
+</div>
+
+</body>
+</html>
